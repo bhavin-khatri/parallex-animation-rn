@@ -207,7 +207,10 @@ export const ResponsivePixels = {
   size280: RFPercentage(0.135 * 280),
   size300: RFPercentage(0.135 * 300),
   size320: RFPercentage(0.135 * 320),
+  size340: RFPercentage(0.135 * 340),
   size350: RFPercentage(0.135 * 350),
+  size380: RFPercentage(0.135 * 380),
+  size390: RFPercentage(0.135 * 390),
   size400: RFPercentage(0.135 * 400),
   size450: RFPercentage(0.135 * 450),
 };

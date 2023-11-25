@@ -1,16 +1,29 @@
 import React, { useRef, useState } from "react";
-import { View, FlatList, Text, Image, StyleSheet, Animated, ImageBackground, SafeAreaView } from "react-native";
+import {
+  View,
+  FlatList,
+  Text,
+  Image,
+  StyleSheet,
+  Animated,
+  ImageBackground,
+  SafeAreaView,
+  TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback
+} from "react-native";
 import Images from '../../common/Images';
 import { Colors } from "../../res/styles/Colors";
 import { ResponsivePixels } from "../../res/styles/ResponsivePixels";
 import { SafeAreaConsumer } from "react-native-safe-area-context";
+import {HeaderView} from "../../common/HeaderView";
+import {navigationConstants} from "../../constants/NavigationConstant";
 
-const Home = () => {
-  const movies = [
+const Home = (props:any) => {
+  const gameList = [
     { id: 1, name: 'Cyberpunk 2077', image: Images.ic_cyberpunk },
-    { id: 2, name: 'Ghost Of Tsushima', image: Images.ic_ghost_of_tsushima },
-    { id: 3, name: 'Predator Hunting Grounds', image: Images.ic_predator },
-  ];
+    { id: 2, name: 'The Last of US II', image: Images.ic_last_of_us },
+
+    { id: 3, name: 'Ghost Of Tsushima', image: Images.ic_ghost_of_tsushima },
+  ]
 
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
 
@@ -25,38 +38,51 @@ const Home = () => {
     extrapolate: 'clamp',
   });
 
-  const renderGameItem = ({ item, index }:{ item:any, index:number }) => {
+  const [pressedItemIndex, setPressedItemIndex] = useState(-1);
 
-    return (
-      <View style={styles.gameItem}>
-      <ImageBackground
-        imageStyle={{ borderRadius: 10 }}
-        source={item.image}
-        style={[styles.imageBackground,]}
-        resizeMode={'cover'}
-      >
-        <View style={styles.animatedViewMain}>
-        <Animated.View style={ { transform: [{ translateY: translateYInterpolation }], margin:25,marginBottom:10 , }}>
-          <Text style={styles.textStyle}>{item.name}</Text>
-          <Text style={styles.subTextStyle}>Esclusive PlayStation</Text>
-          <Image style={styles.ps4Image} source={Images.ic_ps4}/>
-        </Animated.View>
-        </View>
-      </ImageBackground>
-      </View>
+  const navigateToGameDetails=(gameDetails:any,index:any)=>{
+    setPressedItemIndex(index === pressedItemIndex ? -1 : index);
+    setTimeout(()=>{
+      props.navigation.navigate(navigationConstants.GAME_DETAILS, {gameDetails: gameDetails})
+      setPressedItemIndex(-1);
+    },250)
+  }
+
+  const renderGameItem = ({ item, index }:{ item:any, index:number }) => {
+    const isPressed = index === pressedItemIndex;
+    const gameItemStyle = {
+      height: isPressed ? ResponsivePixels.size390 : ResponsivePixels.size400,
+      margin: isPressed ? ResponsivePixels.size40 : ResponsivePixels.size25,
+      marginBottom: isPressed ? ResponsivePixels.size10 : ResponsivePixels.size10,
+    };
+      return (
+      <TouchableOpacity
+          onPress={()=>navigateToGameDetails(item,index)}
+          activeOpacity={1}
+          style={gameItemStyle}>
+        <ImageBackground
+          imageStyle={{ borderRadius: 10 }}
+          source={item.image}
+          style={[styles.imageBackground,]}
+          resizeMode={'cover'}
+        >
+          <View style={styles.animatedViewMain}>
+            <Animated.View style={ { transform: [{ translateY: translateYInterpolation }], margin:ResponsivePixels.size25,marginBottom:ResponsivePixels.size10 , }}>
+              <Text style={styles.textStyle}>{item.name}</Text>
+              <Text style={styles.subTextStyle}>Esclusive PlayStation</Text>
+              <Image style={styles.ps4Image} source={Images.ic_ps4}/>
+            </Animated.View>
+          </View>
+        </ImageBackground>
+      </TouchableOpacity>
     );
   };
 
+
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <View style={[styles.rowView,styles.headerView]}>
-        <Image source={Images.ic_menu} style={styles.headerLargeIcon}/>
-        <Image source={Images.ic_playstation} style={styles.headerLogoIcon}/>
-        <View style={styles.rowView}>
-          <Image source={Images.ic_cart} style={styles.headerSmallIcon}/>
-          <Image source={Images.ic_search} style={styles.headerSmallIcon}/>
-        </View>
-      </View>
+      <HeaderView/>
       <View style={styles.columnView}>
         <Text style={[styles.subTextStyle,{color:Colors.primaryColor}]}>Great Games</Text>
         <Text style={[styles.textStyle,{fontWeight:'normal',color:Colors.defaultGray}]}>Coming soon</Text>
@@ -64,7 +90,7 @@ const Home = () => {
       <FlatList
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
-        data={movies}
+        data={gameList}
         renderItem={renderGameItem}
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -76,12 +102,9 @@ const Home = () => {
 const styles = StyleSheet.create({
   mainContainer:{
     flex: 1,
-    backgroundColor:'white'
+    backgroundColor:Colors.defaultWhite
   },
-  headerView:{
-    marginHorizontal:ResponsivePixels.size25,
-    marginVertical:ResponsivePixels.size10,
-  },
+
   gameItem:{
     height: ResponsivePixels.size400,
     margin: ResponsivePixels.size25,
@@ -102,35 +125,16 @@ const styles = StyleSheet.create({
   ps4Image:{
     height:ResponsivePixels.size30,
     width:ResponsivePixels.size60,
-    tintColor:'white'
-  },
-  headerSmallIcon:{
-    height:ResponsivePixels.size20,
-    width:ResponsivePixels.size20,
-    tintColor:Colors.primaryColor,
-    marginHorizontal:ResponsivePixels.size10
-  },
-  headerLargeIcon:{
-    height:ResponsivePixels.size30,
-    width:ResponsivePixels.size30,
-    tintColor:Colors.primaryColor,
-
-  },
-  headerLogoIcon:{
-    height:ResponsivePixels.size40,
-    width:ResponsivePixels.size40,
-    tintColor:Colors.primaryColor,
-    left:ResponsivePixels.size20,
-
+    tintColor:Colors.defaultWhite
   },
   textStyle:{
     fontSize:ResponsivePixels.size22,
-    color:'white',
+    color:Colors.defaultWhite,
     fontWeight:'bold',
   },
   subTextStyle:{
     fontSize:ResponsivePixels.size16,
-    color:'white',
+    color:Colors.defaultWhite,
   },
   rowView:{
     flexDirection:'row',
