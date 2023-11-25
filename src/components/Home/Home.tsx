@@ -20,9 +20,8 @@ import {navigationConstants} from "../../constants/NavigationConstant";
 const Home = (props:any) => {
   const gameList = [
     { id: 1, name: 'Cyberpunk 2077', image: Images.ic_cyberpunk },
-    { id: 2, name: 'The Last of US II', image: Images.ic_last_of_us },
-
-    { id: 3, name: 'Ghost Of Tsushima', image: Images.ic_ghost_of_tsushima },
+    { id: 2, name: 'Ghost Of Tsushima', image: Images.ic_ghost_of_tsushima },
+    { id: 3, name: 'Predator Hunting Grounds', image: Images.ic_predator },
   ]
 
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
