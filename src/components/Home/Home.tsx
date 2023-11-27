@@ -1,27 +1,27 @@
-import React, { useRef, useState } from "react";
+import React, {useState} from "react";
 import {
-  View,
-  FlatList,
-  Text,
-  Image,
-  StyleSheet,
   Animated,
+  FlatList,
   ImageBackground,
   SafeAreaView,
-  TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import Images from '../../common/Images';
-import { Colors } from "../../res/styles/Colors";
-import { ResponsivePixels } from "../../res/styles/ResponsivePixels";
-import { SafeAreaConsumer } from "react-native-safe-area-context";
+import {Colors} from "../../res/styles/Colors";
+import {ResponsivePixels} from "../../res/styles/ResponsivePixels";
 import {HeaderView} from "../../common/HeaderView";
 import {navigationConstants} from "../../constants/NavigationConstant";
 
 const Home = (props:any) => {
   const gameList = [
     { id: 1, name: 'Cyberpunk 2077', image: Images.ic_cyberpunk },
-    { id: 2, name: 'Ghost Of Tsushima', image: Images.ic_ghost_of_tsushima },
+    { id: 2, name: 'Doom Eternal', image: Images.ic_doom_internal },
     { id: 3, name: 'Predator Hunting Grounds', image: Images.ic_predator },
+
+    { id: 4, name: 'Ghost Of Tsushima', image: Images.ic_ghost_of_tsushima },
   ]
 
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
@@ -37,14 +37,17 @@ const Home = (props:any) => {
     extrapolate: 'clamp',
   });
 
+
+
   const [pressedItemIndex, setPressedItemIndex] = useState(-1);
+
 
   const navigateToGameDetails=(gameDetails:any,index:any)=>{
     setPressedItemIndex(index === pressedItemIndex ? -1 : index);
     setTimeout(()=>{
       props.navigation.navigate(navigationConstants.GAME_DETAILS, {gameDetails: gameDetails})
       setPressedItemIndex(-1);
-    },250)
+    },300)
   }
 
   const renderGameItem = ({ item, index }:{ item:any, index:number }) => {
@@ -55,6 +58,18 @@ const Home = (props:any) => {
       marginBottom: isPressed ? ResponsivePixels.size10 : ResponsivePixels.size10,
     };
       return (
+          <Animated.View
+          style={{
+            transform: [
+              {
+                translateY: scrollY.interpolate({
+                  inputRange: [-100, 0, 100],
+                  outputRange: [5, 0, -5],
+                }),
+              },
+            ],
+          }}
+          >
       <TouchableOpacity
           onPress={()=>navigateToGameDetails(item,index)}
           activeOpacity={1}
@@ -66,14 +81,27 @@ const Home = (props:any) => {
           resizeMode={'cover'}
         >
           <View style={styles.animatedViewMain}>
-            <Animated.View style={ { transform: [{ translateY: translateYInterpolation }], margin:ResponsivePixels.size25,marginBottom:ResponsivePixels.size10 , }}>
-              <Text style={styles.textStyle}>{item.name}</Text>
-              <Text style={styles.subTextStyle}>Esclusive PlayStation</Text>
-              <Image style={styles.ps4Image} source={Images.ic_ps4}/>
+            <Animated.View style={  {transform: [
+                {
+                  translateY: scrollY.interpolate({
+                    inputRange: [-100, 0, 100],
+                    outputRange: [7,0,-7],
+                  }),
+                },
+              ],padding:ResponsivePixels.size20}}>
+
+              <Animated.Text style={[styles.textStyle,{
+              }]}>{item.name}</Animated.Text>
+              <Animated.Text style={[styles.subTextStyle,{
+              }]}>Esclusive PlayStation</Animated.Text>
+              <Animated.Image style={[styles.ps4Image,{
+
+              }]} source={Images.ic_ps4}/>
             </Animated.View>
           </View>
         </ImageBackground>
       </TouchableOpacity>
+          </Animated.View>
     );
   };
 
@@ -92,7 +120,7 @@ const Home = (props:any) => {
         data={gameList}
         renderItem={renderGameItem}
         onScroll={handleScroll}
-        scrollEventThrottle={16}
+        scrollEventThrottle={1000}
       />
     </SafeAreaView>
   );
@@ -110,9 +138,10 @@ const styles = StyleSheet.create({
     marginBottom:ResponsivePixels.size10
   },
   animatedViewMain:{
-    backgroundColor:Colors.blackWithCustomOpacity(0.15),
+    // backgroundColor:Colors.blackWithCustomOpacity(0.4),
     borderBottomEndRadius:ResponsivePixels.size10,
     borderBottomStartRadius:ResponsivePixels.size10,
+    width:'100%'
   },
 
   imageBackground: {
